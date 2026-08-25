@@ -62,7 +62,7 @@ Feel free to feed them to your AI tools.
 |---|---|---|
 | 1 | `resources/output-schema-SKILL.md` → `output-schema-reference.md` (`output-schema-capture-recipes.md` if testing live) | [outputSchema](https://www.activepieces.com/docs/build-pieces/piece-reference/output-schema) |
 | 2 | `resources/ai-action-skills/phase-3-atomics/SKILL.md` (method) → `atomic-templates.md` (archetypes) → `ai-ready-curation/RUBRIC.md` (the aiMetadata bar) | [aiMetadata](https://www.activepieces.com/docs/build-pieces/piece-reference/ai-metadata) |
-| 3 | `resources/property-ui-selection.md` | [Properties](https://www.activepieces.com/docs/build-pieces/piece-reference/properties) |
+| 3 | `resources/property-ui-selection.md` (the step-settings authoring guide) → `ux-guidelines.md` + `props-patterns.md` | [Properties](https://www.activepieces.com/docs/build-pieces/piece-reference/properties) |
 
 New to the codebase? Start at
 [Building pieces overview](https://www.activepieces.com/docs/build-pieces/building-pieces/overview)
