@@ -53,7 +53,7 @@ Feel free to feed them to your AI tools — that's what they're for.
 |---|---|---|
 | Start here | — | [Building pieces overview](https://www.activepieces.com/docs/build-pieces/building-pieces/overview) |
 | 1 · outputSchema | `resources/output-schema-SKILL.md`, `output-schema-reference.md`, `output-schema-capture-recipes.md` (for live capture) | [outputSchema reference](https://www.activepieces.com/docs/build-pieces/piece-reference/output-schema) |
-| 2 · AI actions | `resources/ai-metadata-guide.md` **+ the AI-actions skill — private link in your assessment email** | [aiMetadata reference](https://www.activepieces.com/docs/build-pieces/piece-reference/ai-metadata) |
+| 2 · AI actions | `resources/ai-metadata-guide.md` + the full **AI-actions skill pack** in `resources/ai-action-skills/` (start with `ai-ready-curation/RUBRIC.md` — it is the bar your aiMetadata is graded against) | [aiMetadata reference](https://www.activepieces.com/docs/build-pieces/piece-reference/ai-metadata) |
 | 3 · UI | `resources/property-ui-selection.md` | [Properties reference](https://www.activepieces.com/docs/build-pieces/piece-reference/properties) |
 
 ## Testing against the live APIs (optional, free)
