@@ -76,9 +76,10 @@ Use whatever you want — we do, daily. Two rules:
 
 1. **You must be able to explain every line you submit.** The follow-up interview
    includes a walkthrough of your submission; "the AI wrote it" is an instant no.
-2. Add a `HOW-I-WORKED.md` (5–15 lines): how you approached it, what tools you
-   used and how, which decisions were yours, and your Part 3 essential-props
-   reasoning (task 4 there).
+2. Your PR description (see Submitting below) must include a short HOW-I-WORKED
+   section (5–15 lines): how you approached it, what tools you used and how,
+   which decisions were yours, your Part 2 classification reasoning, and your
+   Part 3 essential-props reasoning.
 
 ## Submitting
 
