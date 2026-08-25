@@ -10,6 +10,7 @@ import type { OutputSchemaField, OutputSchema } from '../src/ap/framework.js';
 import { zoomFindMeeting } from '../src/part1-zoom/find-meeting.js';
 import { zoomCreateMeeting } from '../src/part1-zoom/create-meeting.js';
 import { jiraActions } from '../src/part2-jira/actions.js';
+import { coverageMap, myAtomic } from '../src/part2-jira/my-atomic.js';
 import { youtubeSearchAction } from '../src/part3-youtube/search.js';
 
 const fixture = JSON.parse(
@@ -53,12 +54,32 @@ test('part 2: all 9 jira actions are classified', () => {
   assert.deepEqual(unclassified, [], `unclassified: ${unclassified.join(', ')}`);
 });
 
-test('part 2: at least 3 actions have real aiMetadata', () => {
-  const withMeta = jiraActions.filter(
-    (a) => a.aiMetadata && (a.aiMetadata.description ?? '').length >= 80 && a.aiMetadata.idempotent !== undefined,
-  );
-  assert.ok(withMeta.length >= 3,
-    `need >= 3 actions with aiMetadata (description >= 80 chars + idempotent set), found ${withMeta.length}`);
+test('part 2: coverage map has at least two real adds', () => {
+  const adds = coverageMap.filter((e) => e.kind === 'add');
+  assert.ok(adds.length >= 2, `need >= 2 'add' entries, found ${adds.length}`);
+  for (const a of adds) {
+    assert.ok(a.archetype, `add "${a.name}": archetype is required`);
+    assert.match(a.vendorEndpoint ?? '', /^(GET|POST|PUT|PATCH|DELETE) \/rest\//,
+      `add "${a.name}": vendorEndpoint must be a real Jira REST endpoint like "GET /rest/api/3/..."`);
+    assert.ok(a.rationale.length >= 30, `add "${a.name}": rationale too thin`);
+  }
+});
+
+test('part 2: the atomic is implemented as an ai action', () => {
+  assert.notEqual(myAtomic.name, 'todo_rename_me', 'rename your atomic');
+  assert.match(myAtomic.name, /^[a-z][a-z0-9_]+$/, 'atomic name must be snake_case');
+  assert.equal(myAtomic.audience, 'ai');
+  assert.ok(myAtomic.classification, 'classification is required');
+  assert.ok((myAtomic.aiMetadata?.description ?? '').length >= 80,
+    'aiMetadata.description must be substantial (>= 80 chars)');
+  assert.notEqual(myAtomic.aiMetadata?.idempotent, undefined, 'aiMetadata.idempotent must be set');
+  const props = Object.entries(myAtomic.props);
+  assert.ok(props.length >= 1, 'the atomic needs at least one prop');
+  for (const [k, p] of props) {
+    assert.ok((p.description ?? '').length > 0, `prop "${k}" needs a description`);
+  }
+  const mapped = coverageMap.some((e) => e.kind === 'add' && e.name === myAtomic.name);
+  assert.ok(mapped, 'the implemented atomic must be one of your coverage-map adds');
 });
 
 test('part 3: an essential/Advanced split exists', () => {

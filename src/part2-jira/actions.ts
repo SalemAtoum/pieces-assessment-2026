@@ -1,22 +1,16 @@
-import type { ActionClassification, AiMetadata } from '../ap/framework.js';
+import type { ActionClassification } from '../ap/framework.js';
 
 /**
- * PART 2 — AI actions on the Jira Cloud piece.
+ * PART 2 — step 1 of 2: audit the existing surface.
  *
  * Every action below is real (vendored facts from packages/pieces/community/jira-cloud).
- * In the Activepieces catalog these actions are exposed to AI agents as MCP tools,
- * and the metadata you write here is what the agent sees.
+ * For this exercise, treat these 9 as the piece's ENTIRE surface.
  *
- * YOUR TASKS:
- *  1. Set `classification` on ALL 9 actions: 'READ' | 'SEARCH' | 'WRITE' | 'DESTRUCTIVE'.
- *  2. Pick ANY THREE actions and write their `aiMetadata`:
- *     - description: 2-4 sentences a model reads to decide when/how to call this
- *       tool — what it does, when to prefer it over neighbours, gotchas, and
- *       whether it is idempotent. (Look at Zoom's aiMetadata in Part 1 for tone.)
- *     - idempotent: true/false — would calling it twice with identical input
- *       leave the system in the same state as calling it once?
- *  3. For every action, one short sentence in `reasoning` explaining your
- *     classification (and, where you wrote it, your idempotency call).
+ * YOUR TASK (step 1):
+ *  - Set `classification` on ALL 9 actions: 'READ' | 'SEARCH' | 'WRITE' | 'DESTRUCTIVE'.
+ *  - One short sentence in `reasoning` per action.
+ *  This is the first move of a real atomics audit: you can't see what agents are
+ *  missing until you've mapped what exists. Step 2 is in `my-atomic.ts`.
  */
 
 export type JiraActionCard = {
@@ -27,7 +21,6 @@ export type JiraActionCard = {
   api: string;
   keyProps: string[];
   classification: ActionClassification | null; // <- fill for all 9
-  aiMetadata?: AiMetadata;                      // <- fill for any 3
   reasoning?: string;                           // <- fill for all 9
 };
 

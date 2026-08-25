@@ -29,14 +29,21 @@ A captured real response is in `fixtures/meeting.json`. Study the
 `OutputSchema` type in `src/ap/framework.ts` — nested objects use `children`,
 and pick sensible `format`s and `label`s.
 
-### Part 2 — `src/part2-jira/` · AI-action metadata (~1h)
+### Part 2 — `src/part2-jira/` · AI actions: give the agent a missing tool (~1.5h)
 
-Activepieces actions double as MCP tools for AI agents. Classify all 9 real
-Jira Cloud actions (`READ` / `SEARCH` / `WRITE` / `DESTRUCTIVE`), write
-`aiMetadata` for any 3, and one sentence of reasoning for each call.
-Think like the agent: "if I call this twice by accident, what happens?"
+Activepieces actions double as MCP tools for AI agents, and the team's AI-actions
+project adds **agent atomics** — net-new `audience: 'ai'` actions that give agents
+affordances humans never asked for (find-by-name, list-with-context, upsert, batch,
+missing verbs). You'll do one full mini-cycle, the same way the team shipped ~716
+atomics across 24 pieces:
 
-### Part 3 — `src/part3-youtube/` · step-settings UI (~1h)
+1. `actions.ts` — audit the existing surface: classify all 9 real Jira actions
+   (`READ` / `SEARCH` / `WRITE` / `DESTRUCTIVE`) + one sentence of reasoning each.
+2. `my-atomic.ts` — write a mini **coverage map** (≥2 atomics worth adding, each
+   mapping 1:1 to a real Jira REST endpoint, plus demote/skip judgment), then
+   **implement one of them** as a real `audience: 'ai'` action.
+
+### Part 3 — `src/part3-youtube/` · step-settings UI (~45–60 min)
 
 YouTube's search action has 26 props rendered as one flat wall of fields.
 Apply the new step-settings metadata: essential/Advanced split,
@@ -53,7 +60,7 @@ Feel free to feed them to your AI tools — that's what they're for.
 |---|---|---|
 | Start here | — | [Building pieces overview](https://www.activepieces.com/docs/build-pieces/building-pieces/overview) |
 | 1 · outputSchema | `resources/output-schema-SKILL.md`, `output-schema-reference.md`, `output-schema-capture-recipes.md` (for live capture) | [outputSchema reference](https://www.activepieces.com/docs/build-pieces/piece-reference/output-schema) |
-| 2 · AI actions | `resources/ai-metadata-guide.md` + the full **AI-actions skill pack** in `resources/ai-action-skills/` (start with `ai-ready-curation/RUBRIC.md` — it is the bar your aiMetadata is graded against) | [aiMetadata reference](https://www.activepieces.com/docs/build-pieces/piece-reference/ai-metadata) |
+| 2 · AI actions | `resources/ai-action-skills/phase-3-atomics/SKILL.md` (the method) + `atomic-templates.md` (the archetypes) + `ai-ready-curation/RUBRIC.md` (the aiMetadata bar) + `resources/ai-metadata-guide.md` | [aiMetadata reference](https://www.activepieces.com/docs/build-pieces/piece-reference/ai-metadata) |
 | 3 · UI | `resources/property-ui-selection.md` | [Properties reference](https://www.activepieces.com/docs/build-pieces/piece-reference/properties) |
 
 ## Testing against the live APIs (optional, free)
