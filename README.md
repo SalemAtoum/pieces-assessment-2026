@@ -4,7 +4,7 @@ This take-home mirrors your first month on the Pieces Team: you'll work on **rea
 from three real integrations** (pieces) in the
 [Activepieces](https://github.com/activepieces/activepieces) catalog.
 
-- **Budget: 3–4 hours total.** Please don't spend more — we mean it.
+- **Budget: 5–6 hours total.** Please don't spend more — we mean it.
 - Each file tells you exactly what to do in a `YOUR TASK` comment.
 - TypeScript strict mode; Node 20+.
 
