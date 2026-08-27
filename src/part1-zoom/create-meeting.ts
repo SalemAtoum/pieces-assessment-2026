@@ -2,8 +2,6 @@ import { createAction, Property } from '../ap/framework.js';
 import { HttpMethod, AuthenticationType, httpClient } from '../ap/http.js';
 import { meetingOutputSchema } from './output-schemas.js';
 
-// Vendored from packages/pieces/community/zoom (the real piece), lightly trimmed.
-
 const defaults = {
   agenda: 'My Meeting',
   default_password: false,
@@ -44,11 +42,6 @@ export const zoomCreateMeeting = createAction({
     idempotent: false,
   },
 
-  // ============================================================
-  // PART 1 — YOUR TASK: replace `undefined` with a real OutputSchema.
-  // POST /users/me/meetings returns the same meeting object shape as
-  // fixtures/meeting.json (a created meeting includes start_url too).
-  // ============================================================
   outputSchema: meetingOutputSchema,
 
   props: {
@@ -125,7 +118,6 @@ export const zoomCreateMeeting = createAction({
         type: AuthenticationType.BEARER_TOKEN,
         token: context.auth.access_token,
       },
-      queryParams: {},
     });
     return result.status === 201 ? result.body : result;
   },
