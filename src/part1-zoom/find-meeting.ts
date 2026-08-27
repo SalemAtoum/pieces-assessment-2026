@@ -1,8 +1,6 @@
+import { meetingOutputSchema } from './output-schemas.js';
 import { createAction, Property } from '../ap/framework.js';
 import { HttpMethod, AuthenticationType, httpClient } from '../ap/http.js';
-
-// Vendored from packages/pieces/community/zoom (the real piece). The meeting_id
-// dropdown was simplified to a text prop for this standalone exercise.
 
 export const zoomFindMeeting = createAction({
   name: 'zoom_find_meeting',
@@ -16,12 +14,7 @@ export const zoomFindMeeting = createAction({
     idempotent: true,
   },
 
-  // ============================================================
-  // PART 1 — YOUR TASK: replace `undefined` with a real OutputSchema
-  // describing the response in fixtures/meeting.json (the shape returned
-  // by run() below — GET https://api.zoom.us/v2/meetings/{id}).
-  // ============================================================
-  outputSchema: undefined,
+  outputSchema: meetingOutputSchema,
 
   props: {
     meeting_id: Property.ShortText({
