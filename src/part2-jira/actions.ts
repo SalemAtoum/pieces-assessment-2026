@@ -21,7 +21,7 @@ export type JiraActionCard = {
   api: string;
   keyProps: string[];
   classification: ActionClassification | null; // <- fill for all 9
-  reasoning?: string;                           // <- fill for all 9
+  reasoning?: string;                          // <- fill for all 9
 };
 
 export const jiraActions: JiraActionCard[] = [
@@ -31,7 +31,8 @@ export const jiraActions: JiraActionCard[] = [
     description: 'Get issue data.',
     api: 'GET /rest/api/3/issue/{issueId}',
     keyProps: ['projectId', 'issueId'],
-    classification: null,
+    classification: 'READ',
+    reasoning: 'Fetches single issue details via GET without mutating any remote resource state.',
   },
   {
     name: 'search_issues',
@@ -39,7 +40,8 @@ export const jiraActions: JiraActionCard[] = [
     description: 'Search for issues with JQL.',
     api: 'GET /rest/api/3/search?jql=...  (paginated)',
     keyProps: ['jql', 'maxResults'],
-    classification: null,
+    classification: 'SEARCH',
+    reasoning: 'Executes parameterized queries across the issue collection returning filtered subsets.',
   },
   {
     name: 'create_issue',
@@ -47,7 +49,8 @@ export const jiraActions: JiraActionCard[] = [
     description: 'Creates a new issue in a project.',
     api: 'POST /rest/api/3/issue',
     keyProps: ['projectId', 'issueTypeId', 'summary', 'description', 'assignee', 'priority', 'parentKey', 'labels'],
-    classification: null,
+    classification: 'WRITE',
+    reasoning: 'Creates a new issue entity in the Jira project via POST.',
   },
   {
     name: 'update_issue',
@@ -55,7 +58,8 @@ export const jiraActions: JiraActionCard[] = [
     description: 'Updates an existing issue (only the fields you pass change).',
     api: 'PUT /rest/api/3/issue/{issueId}',
     keyProps: ['issueId', 'summary', 'description', 'assignee', 'priority', 'labels'],
-    classification: null,
+    classification: 'WRITE',
+    reasoning: 'Mutates existing issue fields in place via PUT request.',
   },
   {
     name: 'assign_issue',
@@ -63,7 +67,8 @@ export const jiraActions: JiraActionCard[] = [
     description: 'Assigns an issue to a user.',
     api: 'PUT /rest/api/3/issue/{issueId}/assignee',
     keyProps: ['issueId', 'assigneeId'],
-    classification: null,
+    classification: 'WRITE',
+    reasoning: 'Updates the assignee association of a specific issue.',
   },
   {
     name: 'add_comment_to_issue',
@@ -71,7 +76,8 @@ export const jiraActions: JiraActionCard[] = [
     description: 'Adds a comment to an issue.',
     api: 'POST /rest/api/3/issue/{issueId}/comment',
     keyProps: ['issueId', 'comment'],
-    classification: null,
+    classification: 'WRITE',
+    reasoning: 'Creates a new sub-resource comment on an issue.',
   },
   {
     name: 'delete_issue_comment',
@@ -79,7 +85,8 @@ export const jiraActions: JiraActionCard[] = [
     description: 'Deletes a comment on a specific issue.',
     api: 'DELETE /rest/api/3/issue/{issueId}/comment/{commentId}',
     keyProps: ['issueId', 'commentId'],
-    classification: null,
+    classification: 'DESTRUCTIVE',
+    reasoning: 'Permanently removes a comment resource from Jira via DELETE.',
   },
   {
     name: 'transition_issue',
@@ -87,7 +94,8 @@ export const jiraActions: JiraActionCard[] = [
     description: 'Moves an issue to another workflow status (e.g. To Do -> In Progress -> Done).',
     api: 'POST /rest/api/3/issue/{issueId}/transitions',
     keyProps: ['issueId', 'transitionId'],
-    classification: null,
+    classification: 'WRITE',
+    reasoning: 'Advances the issue state within its workflow status engine.',
   },
   {
     name: 'markdown_to_jira_format',
@@ -95,6 +103,7 @@ export const jiraActions: JiraActionCard[] = [
     description: 'Converts Markdown text into Jira wiki markup. Makes NO API call — pure local text transform.',
     api: '(none — local transformation only)',
     keyProps: ['markdown'],
-    classification: null,
+    classification: 'READ',
+    reasoning: 'Performs pure local string transformations with zero network or state side effects.',
   },
 ];

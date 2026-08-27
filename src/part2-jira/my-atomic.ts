@@ -1,34 +1,5 @@
 import { createAction, Property } from '../ap/framework.js';
-
-/**
- * PART 2 — step 2 of 2: give the agent a tool it's missing.
- *
- * This mirrors the team's real AI-actions (Phase 3) work: net-new
- * `audience: 'ai'` actions ("agent atomics") added BESIDE the existing ones,
- * so an AI agent gets affordances humans never asked for.
- *
- * READ FIRST (all vendored in this repo):
- *   resources/ai-action-skills/phase-3-atomics/SKILL.md          — the method
- *   resources/ai-action-skills/phase-3-atomics/atomic-templates.md — the 7 archetypes
- *   resources/ai-action-skills/ai-ready-curation/RUBRIC.md       — the aiMetadata bar
- *
- * YOUR TASKS:
- *  A. Fill `coverageMap` with AT LEAST TWO atomics worth adding to Jira Cloud
- *     (plus any demote/skip calls). Rules:
- *     - every atomic must map 1:1 to a REAL Jira Cloud REST endpoint
- *       (https://developer.atlassian.com/cloud/jira/platform/rest/v3/) — no invented APIs;
- *     - `archetype` from the templates: 'find-by-name' | 'list-with-context' |
- *       'upsert' | 'batch' | 'missing-verb' | 'partial-update' | 'async-job';
- *     - demote an existing action ONLY if your atomics fully cover its
- *       agent-relevant intents (the skill's demotion gate — when in doubt, don't).
- *  B. Implement ONE atomic from your map, below. Requirements:
- *     - `audience: 'ai'`, correct `classification`, `aiMetadata` that clears RUBRIC.md
- *       (what + when-to-pick-over-siblings + key constraint; `idempotent` derived
- *       from what run() actually does);
- *     - narrow, single-purpose props — every prop has a description;
- *     - run() calls the real endpoint (auth pattern below) and returns flat,
- *       consistently-keyed output (see output-quality guidance in the skill pack).
- */
+import { HttpMethod, httpClient } from '../ap/http.js';
 
 export type AtomicArchetype =
   | 'find-by-name'
@@ -41,36 +12,90 @@ export type AtomicArchetype =
 
 export type CoverageMapEntry = {
   kind: 'add' | 'demote' | 'skip';
-  /** For 'add': your atomic's snake_case name. For 'demote'/'skip': the existing action's name. */
   name: string;
-  archetype?: AtomicArchetype; // required for 'add'
-  /** For 'add': the real vendor endpoint, e.g. 'GET /rest/api/3/project/search'. */
+  archetype?: AtomicArchetype;
   vendorEndpoint?: string;
   rationale: string;
 };
 
 export const coverageMap: CoverageMapEntry[] = [
-  // TODO (task A) — at least two 'add' entries; 'demote'/'skip' where you judge right.
+  {
+    kind: 'add',
+    name: 'find_user_by_query',
+    archetype: 'find-by-name',
+    vendorEndpoint: 'GET /rest/api/3/user/search',
+    rationale:
+      'AI agents need to look up Atlassian account IDs by human names or email strings before invoking assign_issue or create_issue.',
+  },
+  {
+    kind: 'add',
+    name: 'list_transitions_for_issue',
+    archetype: 'missing-verb',
+    vendorEndpoint: 'GET /rest/api/3/issue/{issueId}/transitions',
+    rationale:
+      'Enables AI agents to query the dynamic list of valid transition IDs for a given issue state before calling transition_issue.',
+  },
+  {
+    kind: 'skip',
+    name: 'markdown_to_jira_format',
+    rationale:
+      'LLM agents produce Jira-compatible markup natively within context; no standalone tool execution is required.',
+  },
 ];
 
-/**
- * Auth: Jira Cloud uses basic auth. `context.auth` here is
- * `{ instanceUrl: string; email: string; apiToken: string }` — build the header with
- * `Authorization: Basic base64(email + ':' + apiToken)`.
- * (Free test site: https://www.atlassian.com/software/jira/free)
- */
 export const myAtomic = createAction({
-  name: 'todo_rename_me', // TODO (task B)
-  displayName: 'TODO',
-  description: 'TODO',
+  name: 'find_user_by_query',
+  displayName: 'Find Jira User by Query',
+  description:
+    'Search for Jira Cloud users by name, email address, or username to retrieve their account IDs.',
   audience: 'ai',
-  // classification: TODO
-  // aiMetadata: TODO
+  classification: 'SEARCH',
+  aiMetadata: {
+    description:
+      'Searches Jira Cloud users matching a text query (name or email string) and returns their account IDs and display names. Use this before assign_issue or create_issue when only a person name is provided. Read-only and idempotent.',
+    idempotent: true,
+  },
   props: {
-    // TODO — narrow, single-purpose, every prop described
+    query: Property.ShortText({
+      displayName: 'Search Query',
+      description: 'The username, display name, or email string to search for.',
+      required: true,
+    }),
+    maxResults: Property.Number({
+      displayName: 'Max Results',
+      description: 'The maximum number of matching users to return (default is 10).',
+      required: false,
+      defaultValue: 10,
+    }),
   },
   async run(context) {
-    // TODO — call the real endpoint; return flat, well-shaped output
-    throw new Error('not implemented');
+    const auth = context.auth as { instanceUrl: string; email: string; apiToken: string };
+    const basicAuth = btoa(`${auth.email}:${auth.apiToken}`);
+    const cleanBaseUrl = auth.instanceUrl.replace(/\/+$/, '');
+
+    const queryParams: Record<string, string> = {
+      query: String(context.propsValue.query),
+      maxResults: String(context.propsValue.maxResults ?? 10),
+    };
+
+    const response = await httpClient.sendRequest<
+      Array<{ accountId: string; displayName: string; emailAddress?: string; active: boolean }>
+    >({
+      method: HttpMethod.GET,
+      url: `${cleanBaseUrl}/rest/api/3/user/search`,
+      headers: {
+        Authorization: `Basic ${basicAuth}`,
+        Accept: 'application/json',
+      },
+      queryParams,
+    });
+
+    const users = Array.isArray(response.body) ? response.body : [];
+    return users.map((u) => ({
+      accountId: u.accountId,
+      displayName: u.displayName,
+      emailAddress: u.emailAddress ?? '',
+      active: u.active,
+    }));
   },
 });
